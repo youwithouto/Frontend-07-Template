@@ -28,7 +28,12 @@
   - Scoping rules in JS
   - `Object.create` and object prototype
   - `JSON`
-
+  - Grid representation (nested array vs. single array)
+  - Async mechanisms
+    - Callback
+    - `Promise`
+    - `async`/`await`
+    - Generator
 
 ### TODO
   

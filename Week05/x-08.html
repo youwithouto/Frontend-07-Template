@@ -1,0 +1,71 @@
+<div id="container">
+    欢迎你加入「前端进阶训练营」第 7 期，我是你的班主任心心。
+
+    在接下来的时间里，我会全程陪伴你完成学习任务。我想大部分同学已经明确了解课程内容和教学目标了，希望在这里的学习能帮助你更上一层楼。当然，我也从来不相信“速成”、“捷径”之类的宣传语，我们想要把课程学明白，就需要付出不亚于任何人的努力。
+
+    在正式开课之前，请先阅读学习手册，我会告诉你“极客大学的正确打开方式”，带你了解「前端进阶训练营」的整体安排，帮助你更高效的利用我们提供给你的每一项服务。
+
+    在课程开始之前，请务必完成以下任务：
+    1. 完成“我的教室”左侧的学员信息填写
+
+    这份学员信息表是为了帮助极客大学的学习服务和教研团队更全面的了解你，更好的帮助你学习。我们会依据“学员信息”中的姓名来给你生成毕业证，会根据“学员信息”中的其他信息进行分班分组 。
+    2. 尽快添加班主任的微信
+
+    作为你的班主任，我全程陪伴你完成极客大学的学习，也会组织丰富多彩的班级活动，助教的答疑、重要的学习活动通知也都会在班级微信群内进行，因此，如果你还没有添加我，请尽快扫描下方二维码添加，并备注“前端 7 期 - 姓名”。
+</div>
+<div id="dragable" style="display: inline-block; width: 100px; height: 100px; background-color: pink;"></div>
+<script>
+    let dragable = document.getElementById("dragable");
+
+    let baseX = 0, baseY = 0;
+
+    dragable.addEventListener("mousedown", function (event) {
+        let startX = event.clientX, startY = event.clientY;
+
+        let up = (event) => {
+            baseX = baseX + event.clientX - startX;
+            baseY = baseY + event.clientY - startY;
+
+            document.removeEventListener("mousemove", move);
+            document.removeEventListener("mouseup", up);
+        };
+        let move = (event) => {
+            // dragable.style.transform = `translate(${baseX + event.clientX - startX}px, ${baseY + event.clientY - startY}px)`;
+            let range = getNearest(event.clientX, event.clientY);
+            range.insertNode(dragable);
+        };
+
+        document.addEventListener("mousemove", move);
+        document.addEventListener("mouseup", up);
+    });
+
+    let ranges = [];
+    let container = document.getElementById("container");
+
+    for (let i = 0; i < container.childNodes[0].textContent.length; i++) {
+        let range = document.createRange();
+        range.setStart(container.childNodes[0], i);
+        range.setEnd(container.childNodes[0], i);
+
+        console.log(range.getBoundingClientRect());
+        ranges.push(range);
+    }
+
+    function getNearest(x, y) {
+        let min = Infinity;
+        let nearest = null;
+
+        for (let range of ranges) {
+            let rect = range.getBoundingClientRect();
+            let distance = (rect.x - x) ** 2 + (rect.y - y) ** 2;;
+
+            if (distance < min) {
+                nearest = range;
+                min = distance;
+            }
+        }
+        return nearest;
+    }
+
+    document.addEventListener("selectstart", event => event.preventDefault());
+</script>

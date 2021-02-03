@@ -1,5 +1,7 @@
 const css = require('css');
 
+const layout = require('./layout');
+
 let currentToken = null;
 let currentAttribute = null;
 let currentTextNode = null;
@@ -79,6 +81,9 @@ function emit(token) {
             if (top.tagName === "style") {
                 addCSSRules(top.children[0].content);
             }
+            // 1. add layout module
+            //  flex layout requires the knowledge of child elements, thus add layout at this end tag
+            layout(top);
             stack.pop();
         }
         currentTextNode = null;

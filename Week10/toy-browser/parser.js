@@ -67,7 +67,7 @@ function emit(token) {
         computeCSS(element);
 
         top.children.push(element);
-        element.parent = top;
+        // element.parent = top;
 
         if (!token.isSelfClosing) {
             stack.push(element);
@@ -113,9 +113,6 @@ function computeCSS(element) {
     for (let rule of rules) {
         var selectorParts = rule.selectors[0].split(" ").reverse();
 
-        console.log(selectorParts);
-        console.log(match(element, selectorParts[0]));
-
         if (!match(element, selectorParts[0])) {
             continue;
         }
@@ -133,10 +130,7 @@ function computeCSS(element) {
             matched = true;
         }
 
-        console.log(matched);
-
         if (matched) {
-            console.log("Element", element, "matched rule", rule);
             var sp = specificity(rule.selectors[0]);
             var computedStyle = element.computedStyle;
             for (var declaration of rule.declarations) {
@@ -152,14 +146,12 @@ function computeCSS(element) {
                     computedStyle[declaration.property].specificity = sp;
                 }
             }
-            console.log(element.computedStyle);
         }
     }
 }
 
 // Assuming all selectors are simple selectors
 function match(element, selector) {
-    console.log("match", element.tagName, selector);
     if (!selector || !element.attributes) { // use .attributes to determine if the current elemenet is a text node
         return false;
     }
@@ -473,6 +465,5 @@ module.exports.parseHTML = function (html) {
         state = state(c);
     }
     state = state(EOF);
-    console.log(stack[0]);
     return stack[0];
 };

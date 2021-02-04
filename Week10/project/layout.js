@@ -189,7 +189,7 @@ function layout(element) {
                 flexLine = [item];
                 flexLines.push(flexLine);
 
-                mainSpace = style(mainSize);
+                mainSpace = style[mainSize];
                 crossSpace = 0;
             } else {
                 flexLine.push(item);
@@ -202,6 +202,92 @@ function layout(element) {
         }
     }
     flexLine.mainSpace = mainSpace;
+
+    if (style.flexWrap === 'nowrap' || isAutoMainSize) {
+        flexLine.crossSpace = (style[crossSize] !== (void 0)) ? style[crossSize] : crossSpace;
+    } else {
+        flexLine.crossSpace = crossSpace;
+    }
+
+    if (mainSpace < 0) {
+        // scale down every element equally
+        var scale = style[mainSize] / (style[mainSize] - mainSpace);
+        var currentMain = mainBase;
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var itemStyle = getStyle(item);
+
+            if (itemStyle.flex) {
+                itemStyle[mainSize] = 0;
+            }
+
+            itemStyle[mainSize] = itemStyle[mainSize] * scale;
+
+            itemStyle[mainStart] = currentMain;
+            itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+            currentMain = itemStyle[mainEnd];
+        }
+    } else {
+        flexLines.forEach(function (items) {
+            var mainSpace = items.mainSpace;
+            var flexTotal = 0;
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var itemStyle = getStyle(item);
+
+                if ((itemStyle.flex !== null) && (itemStyle !== (void 0))) {
+                    flexTotal += itemStyle.flex;
+                    continue;
+                }
+            }
+
+            if (flexTotal > 0) {
+                // There are flexible items
+                var currentMain = mainBase;
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    var itemStyle = getStyle(item);
+
+                    if (itemStyle.flex) {
+                        itemStyle[mainSize] = (mainSpace / flexTotal) * itemStyle.flex;
+                    }
+                    itemStyle[mainStart] = currentMain;
+                    itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+                    currentMain = itemStyle[mainEnd];
+                }
+            } else {
+                // There is no flexible items
+                if (style.justifyContent === 'flex-start') {
+                    var currentMain = mainBase;
+                    var step = 0;
+                }
+                if (style.justifyContent === 'flex-end') {
+                    var currentMain = mainSpace * mainSign * mainBase;
+                    var step = 0;
+                }
+                if (style.justifyContent === 'center') {
+                    var currentMain = mainSpace / 2 * mainSign + mainBase;
+                    var step = 0;
+                }
+                if (style.justifyContent === 'space-between') {
+                    var step = mainSpace / (items.length - 1) * mainSign;
+                    var currentMain = mainBase;
+                }
+                if (style.justifyContent === 'space-around') {
+                    var step = mainSpace / items.length * mainSign;
+                    var currentMain = step / 2 + mainBase;
+                }
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    var itemStyle = getStyle(item);
+
+                    itemStyle[mainStart] = currentMain;
+                    itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+                    currentMain = itemStyle[mainEnd] + step;
+                }
+            }
+        });
+    }
 
     console.log(items);
 }

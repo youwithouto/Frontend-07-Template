@@ -25,20 +25,19 @@ function layout(element) {
     if (!element.computedStyle) {
         return;
     }
-    var elementStyle = getStyle(element);   // this function is defined above
+
+    let elementStyle = getStyle(element);   // this function is defined above
 
     if (elementStyle.display !== 'flex') {
         return;
     }
 
     // Only keep "element"
-    var items = element.children.filter(e => e.type === "element");
+    let items = element.children.filter(e => e.type === "element");
 
-    items.sort(function (a, b) {
-        return (a.order || 0) - (b.order || 0);
-    });
+    items.sort((a, b) => (a.order || 0) - (b.order || 0));
 
-    var style = elementStyle;
+    let style = elementStyle;
 
     ['width', 'height'].forEach(size => {
         if (style[size] === 'auto' || style[size] === '') {
@@ -63,7 +62,7 @@ function layout(element) {
         style.alignContent = 'stretch';
     }
 
-    var mainSize, mainStart, mainEnd, mainSign, mainBase,
+    let mainSize, mainStart, mainEnd, mainSign, mainBase,
         crossSize, crossStart, crossEnd, crossSign, crossBase;
 
     if (style.flexDirection === 'row') {
@@ -128,7 +127,7 @@ function layout(element) {
 
     // wrap line and reverse
     if (style.flexDirection === 'wrap-reverse') {
-        var tmp = crossStart;
+        let tmp = crossStart;
         crossStart = crossEnd;
         crossEnd = tmp;
 
@@ -138,30 +137,30 @@ function layout(element) {
         crossSign = 1;
     }
 
-    var isAutoMainSize = false;
-    if (!style[mainSign]) { // auto sizing
+    let isAutoMainSize = false;
+    if (!style[mainSize]) { // auto sizing
         elementStyle[mainSize] = 0;
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var itemStyle = getStyle(item);
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+            let itemStyle = getStyle(item);
 
-            if (itemStyle[mainSize] !== null || itemStyle[mainSize] !== (void 0)) {    // TODO
+            if (itemStyle[mainSize] !== null || itemStyle[mainSize] !== (void 0)) {
                 elementStyle[mainSize] = elementStyle[mainSize] + itemStyle[mainSize];
             }
         }
         isAutoMainSize = true;
     }
 
-    var flexLine = [];
-    var flexLines = [flexLine];
+    let flexLine = [];
+    let flexLines = [flexLine];
 
-    var mainSpace = elementStyle[mainSize];
-    var crossSpace = 0;
+    let mainSpace = elementStyle[mainSize];
+    let crossSpace = 0;
 
     // loop through all flex items
-    for (var i = 0; i < items.length; i++) {
-        var item = items[i];
-        var itemStyle = getStyle(item);
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        let itemStyle = getStyle(item);
 
         if (itemStyle[mainSize] === null) {
             itemStyle[mainSize] = 0;
@@ -171,8 +170,8 @@ function layout(element) {
             flexLine.push(item);
         } else if (style.flexWrap === 'nowrap' && isAutoMainSize) {
             mainSpace -= itemStyle[mainSize];
-            if (itemStyle[crossSize] !== null && itemStyle[crossSize] !== (void 0)) {
-                crossSpace = Math.max(crossSpace, itemStyle[crossSize]);
+            if (itemStyle[crossSpace] !== null && itemStyle[crossSpace] !== (void 0)) {
+                crossSpace = Math.max(crossSpace, itemStyle[crossSpace]);
             }
             flexLine.push(item);
         } else {
@@ -195,7 +194,7 @@ function layout(element) {
                 flexLine.push(item);
             }
 
-            if (itemStyle[crossSize] !== null && itemStyle[crossSize] !== (void 0)) {
+            if (itemStyle[crossSpace] !== null && itemStyle[crossSpace] !== (void 0)) {
                 crossSpace = Math.max(crossSpace, itemStyle[crossSpace]);
             }
             mainSpace -= itemStyle[mainSize];
@@ -211,11 +210,12 @@ function layout(element) {
 
     if (mainSpace < 0) {
         // scale down every element equally
-        var scale = style[mainSize] / (style[mainSize] - mainSpace);
-        var currentMain = mainBase;
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            var itemStyle = getStyle(item);
+        let scale = style[mainSize] / (style[mainSize] - mainSpace);
+        let currentMain = mainBase;
+
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+            let itemStyle = getStyle(item);
 
             if (itemStyle.flex) {
                 itemStyle[mainSize] = 0;
@@ -228,14 +228,15 @@ function layout(element) {
             currentMain = itemStyle[mainEnd];
         }
     } else {
-        flexLines.forEach(function (items) {
-            var mainSpace = items.mainSpace;
-            var flexTotal = 0;
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                var itemStyle = getStyle(item);
+        flexLines.forEach((items) => {
+            let mainSpace = items.mainSpace;
+            let flexTotal = 0;
 
-                if ((itemStyle.flex !== null) && (itemStyle !== (void 0))) {
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+                let itemStyle = getStyle(item);
+
+                if ((itemStyle.flex !== null) && (itemStyle.flex !== (void 0))) {
                     flexTotal += itemStyle.flex;
                     continue;
                 }
@@ -243,10 +244,10 @@ function layout(element) {
 
             if (flexTotal > 0) {
                 // There are flexible items
-                var currentMain = mainBase;
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
-                    var itemStyle = getStyle(item);
+                let currentMain = mainBase;
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+                    let itemStyle = getStyle(item);
 
                     if (itemStyle.flex) {
                         itemStyle[mainSize] = (mainSpace / flexTotal) * itemStyle.flex;
@@ -291,7 +292,7 @@ function layout(element) {
 
     // Compute the cross axis sizes
     // align-items, align-self
-    var crossSpace;
+    // var crossSpace;
 
     if (!style[crossSize]) {
         crossSpace = 0;
@@ -375,7 +376,6 @@ function layout(element) {
         crossBase += crossSign * (lineCrossSize + step);
     });
 
-    console.log(items);
 }
 
 module.exports = layout;

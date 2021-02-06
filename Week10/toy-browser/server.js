@@ -5,15 +5,19 @@ const RESPONSE_BODY = `
 <head>
     <style>
 #container {
-    width: 500px;
-    height: 300px;
-    display: flex;
+    width:500px;
+    height:300px;
+    display:flex;
+    background-color: rgb(255,255,255);
 }
 #container #myid {
-    width: 200px;
+    width:200px;
+    height:100px;
+    background-color: rgb(255,0,0);
 }
 #container .c1 {
     flex:1;
+    background-color: rgb(0,255,0);
 }
     </style>
 </head>

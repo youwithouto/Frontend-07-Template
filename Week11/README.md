@@ -103,16 +103,3 @@ CSS 规则的结构
 
 ::first-line 选中第一行
 ::::first-letter 选中第一个字母
-
-
-为什么 first-letter 可以设置 float 之类的，而 first-line 不行呢？
-
-
-
-```javascript
-function match(selector, element) {
-    return true;
-}
-
-match("div #id.class", document.getElementById("id"));
-```
